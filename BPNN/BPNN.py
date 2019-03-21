@@ -1,43 +1,19 @@
-import numpy
+import numpy as np 
 import sys
 import warnings
 import matplotlib.pyplot as plt
 
 class network_graph:
     
-    def __init__(self, dataInput, ans, hiddenWide, activityFunc = None):
+    def __init__(self, layoutWideNum, layoutActivityFunc, LR = 0.0001):
 
-        self.input = numpy.matrix(dataInput)        
-        self.ans = numpy.matrix(ans)
+        self.layoutWideNum = layoutWideNum
+        self.layoutActivityFunc = layoutActivityFunc
+        self.deepNum = len(layoutWideNum)
+        if len(self.layoutActivityFunc) != self.deepNum:
+            raise warnings.warn("The WideNum length must same as layoutActivityFunc length!", UserWarning)
 
-        # self.deepNum = len(hiddenWide)
-        self.deepNum = len(hiddenWide) + 2
-
-        # self.wideNum = hiddenWide
-        self.wideNum = self.input.shape[0]
-        self.wideNum = numpy.hstack((self.wideNum, hiddenWide)) 
-        self.wideNum = numpy.hstack((self.wideNum, self.ans.shape[0]))
-
-        self.wNum = [0] * self.deepNum
-
-        # try:
-
-        if self.input.shape[0] != self.wideNum[0]:
-            raise warnings.warn('The input array len is not matched the first wide number!', UserWarning)
-
-        if self.ans.shape[0] != self.wideNum[-1]:                
-            raise warnings.warn('The answer array len is not matched the final wide number!', UserWarning)
-
-        for i in range(self.input.shape[0] - 1):
-            if len(self.input[i]) != len(self.input[i + 1]):
-                raise warnings.warn('The input array elements don\'t have same len!', UserWarning)
-            
-        for i in range(self.ans.shape[0] - 1):
-            if len(self.ans[i]) != len(self.ans[i + 1]):
-                raise warnings.warn('The answer array elements don\'t have same len!', UserWarning)
-        
-        if self.input.shape[1] != self.ans.shape[1]:
-            raise warnings.warn('The input array shape isn\'t same as the answer array shape!', UserWarning)    
+        self.wNum = [0] * self.deepNum    
 
         self.net = [[] for i in range(self.deepNum)]
         self.out = [[] for i in range(self.deepNum)]
@@ -45,134 +21,165 @@ class network_graph:
         self.b = {}
         self.delta = {}
 
-        self.activity_func = lambda x, alpha :  1.0 / (1 + numpy.exp(- alpha * x))
-
-        self.derive_func = lambda f, step, alpha, x : (f(x + step, alpha) - f(x - step, alpha)) / (2.0 * step)
-
-        self.LR = 0.001
+        self.derive_func = lambda f, x, step, *args : (f(x + step, *args) - f(x - step, *args)) / (2.0 * step)
+        self.LR = LR
 
         """
         w_str: Wn(從輸入層向後第n層權重)
         """
         for i in range(1, self.deepNum):
 
-            self.wNum[i] = self.wideNum[i - 1] * self.wideNum[i]
+            self.wNum[i] = self.layoutWideNum[i - 1] * self.layoutWideNum[i]
 
-            w_str = 'W' + str(i)
+            w_str = "W" + str(i)
     
-            w_rand_array = numpy.matrix(numpy.random.rand(self.wideNum[i - 1], self.wideNum[i]))
+            w_rand_array = np.matrix(np.random.rand(self.layoutWideNum[i - 1], self.layoutWideNum[i]))
             self.w.update({w_str : w_rand_array})
 
-            b_str = 'B' + str(i)
+            b_str = "B" + str(i)
 
-            b_rand_array = numpy.matrix(numpy.random.rand(self.wideNum[i]))
+            b_rand_array = np.matrix(np.random.rand(self.layoutWideNum[i]))
             self.b.update({b_str : b_rand_array})
 
-       
-    def single_input_forward(self, input_pair_num):
+    def validDataSize(self, targetInput, targetOutput):
+        
+        targetInputShape = np.shape(targetInput)
+        targetOutputShape = np.shape(targetOutput)
+
+        # if not isinstance(targetInput, np.matrix) or not isinstance(targetOutput, np.matrix):
+        #     raise warnings.warn("The data type must be np matrix!", UserWarning)
+
+        if np.ndim(targetInput) != 2 or np.ndim(targetOutput) != 2:
+            raise warnings.warn("The dim must be 2D!", UserWarning)
+
+        if targetInputShape[0] != self.layoutWideNum[0]:
+            raise warnings.warn("The input array len is not matched the first wide number!", UserWarning)
+
+        if targetOutputShape[0] != self.layoutWideNum[-1]:                
+            raise warnings.warn("The answer array len is not matched the final wide number!", UserWarning)
+
+        for i in range(targetInputShape[0] - 1):
+            if len(targetInput[i]) != len(targetInput[i + 1]):
+                raise warnings.warn("The input array elements don\"t have same len!", UserWarning)
+            
+        for i in range(targetOutputShape[0] - 1):
+            if len(targetOutput[i]) != len(targetOutput[i + 1]):
+                raise warnings.warn("The answer array elements don\"t have same len!", UserWarning)
+        
+        if targetInputShape[1] != targetOutputShape[1]:
+            raise warnings.warn("The input array shape isn\"t same as the answer array shape!", UserWarning)
+
+    def single_input_forward(self, targetInput, targetOutput, pairNum):
 
         """
         net: Wx + b
-        out: f(net)
+        out: f(net)        
         """
-        self.net[0] = numpy.matrix(self.input, dtype = numpy.float64)[:, input_pair_num].T
-        self.out[0] = numpy.matrix(numpy.copy(self.net[0]))
+
+        # self.validDataSize(targetInput, targetOutput)
+        # for input_pair_num in range(0, np.shape(targetInput)[1]):        
+        self.net[0] = np.matrix(targetInput, dtype = np.float64)[:, pairNum].T
+
+        if self.layoutActivityFunc[0] == None:
+            self.out[0] = np.matrix(np.copy(self.net[0]))
+        else:
+            self.out[0] = self.layoutActivityFunc[0](self.net[0], 1)
 
         for i in range(1, self.deepNum):  
-            self.net[i] = numpy.dot(self.out[i - 1], self.w['W' + str(i)])
-            self.net[i] += self.b['B' + str(i)]
+            self.net[i] = np.dot(self.out[i - 1], self.w["W" + str(i)])
+            self.net[i] += self.b["B" + str(i)]
 
-            if (i != (self.deepNum - 1)):
-                self.out[i] = self.activity_func(self.net[i], 1)
+            if self.layoutActivityFunc[i] == None:
+                self.out[i] = np.matrix(np.copy(self.net[i]))
             else:
-                self.out[i] = numpy.matrix(numpy.copy(self.net[i]))
+                self.out[i] = self.layoutActivityFunc[i](self.net[i], 1)
+            # if (i != (self.deepNum - 1)):
+            #     self.out[i] = self.activity_func(self.net[i], 1)
+            # else:
+            #     self.out[i] = np.matrix(np.copy(self.net[i]))
 
-    def single_output_error_update(self, output_pair_num):
-        
+    def single_output_error_update(self, targetInput, targetOutput, pairNum):
+
         update_data_w = []
         update_data_b = []
         for i in range(1, self.deepNum)[::-1]:
 
-            try:
-                error_update_level = self.deepNum - i
-                if error_update_level == 1:
+            error_update_level = self.deepNum - i
+            if error_update_level == 1:
 
-                    delta_array = (self.out[i].T - self.ans[:, output_pair_num])
-                    # delta_array = numpy.multiply(delta_array, self.derive_func(self.activity_func, 1, self.net[i].T, 0.0001)) #(d - y) * f'(net)
+                delta_array = (self.out[i].T - targetOutput[:, pairNum])
+                if self.layoutActivityFunc[i] != None:
+                    delta_array = np.multiply(delta_array, self.derive_func(self.layoutActivityFunc[i], self.net[i].T, 0.0001, 1))
 
-                    d_str = 'D' + str(i)                    
-                    self.delta.update({d_str : delta_array})
+                # delta_array = np.multiply(delta_array, self.derive_func(self.activity_func, 1, self.net[i].T, 0.0001)) #(d - y) * f"(net)
 
-                    delta_w = numpy.dot(delta_array, self.out[i - 1])   #delta * y
+                d_str = "D" + str(i)                    
+                self.delta.update({d_str : delta_array})
 
-                    update_data_w.append(self.w['W' + str(i)] - self.LR * numpy.matrix(delta_w).T)
-                    update_data_b.append(self.b['B' + str(i)] - self.LR * numpy.matrix(delta_array))
+                delta_w = np.dot(delta_array, self.out[i - 1])   #delta * y
 
-                    # update_data_w = self.w['W' + str(i)] - self.LR * numpy.matrix(delta_w).T
-                    # update_data_b = self.b['B' + str(i)] - self.LR * numpy.matrix(delta_array)
+                update_data_w.append(self.w["W" + str(i)] - self.LR * np.matrix(delta_w).T)
+                update_data_b.append(self.b["B" + str(i)] - self.LR * np.matrix(delta_array))
 
-                    # self.w.update({'W' + str(i) : numpy.matrix(update_data_w)})
-                    # self.b.update({'B' + str(i) : numpy.matrix(update_data_b)})
-                # elif error_update_level == 2:
-                else:
-                    delta_array = self.delta['D' + str(i + 1)]
-                    delta_array = numpy.dot(delta_array, self.w['W' + str(i + 1)].T)    #delta * W
-                    delta_array = numpy.multiply(delta_array, self.derive_func(self.activity_func, 1, self.net[i], 0.0001))   #delta * f'(net)
+            else:
+                delta_array = self.delta["D" + str(i + 1)]
+                delta_array = np.dot(delta_array, self.w["W" + str(i + 1)].T)    #delta * W
+                if self.layoutActivityFunc[i] != None:
+                    delta_array = np.multiply(delta_array, self.derive_func(self.layoutActivityFunc[i], self.net[i], 0.0001, 1))
+                # delta_array = np.multiply(delta_array, self.derive_func(self.activity_func, self.net[i], 0.0001, 1))   #delta * f"(net)
 
-                    d_str = 'D' + str(i)                    
-                    self.delta.update({d_str : delta_array})
+                d_str = "D" + str(i)                    
+                self.delta.update({d_str : delta_array})
 
-                    delta_w = numpy.dot(delta_array.T, self.out[i - 1])
+                delta_w = np.dot(delta_array.T, self.out[i - 1])
 
-                    update_data_w.append(self.w['W' + str(i)] - self.LR * numpy.matrix(delta_w).T)
-                    update_data_b.append(self.b['B' + str(i)] - self.LR * numpy.matrix(delta_array))
-
-                    # update_data_w = self.w['W' + str(i)] - self.LR * numpy.matrix(delta_w).T
-                    # update_data_b = self.b['B' + str(i)] - self.LR * numpy.matrix(delta_array)
-
-                    # self.w.update({'W' + str(i) : numpy.matrix(update_data_w)})
-                    # self.b.update({'B' + str(i) : numpy.matrix(update_data_b)})
-
-                # else:
-                #     raise warnings.warn('Error update function no define!')
-                    
-            except Exception as ex:
-                sys.exit(False)
+                update_data_w.append(self.w["W" + str(i)] - self.LR * np.matrix(delta_w).T)
+                update_data_b.append(self.b["B" + str(i)] - self.LR * np.matrix(delta_array))
+                        
 
         for i in range(1, self.deepNum)[::-1]:
             reverseIndex = self.deepNum - i - 1
-            self.w.update({'W' + str(i) : numpy.matrix(update_data_w[reverseIndex])})
-            self.b.update({'B' + str(i) : numpy.matrix(update_data_b[reverseIndex])})
+            self.w.update({"W" + str(i) : np.matrix(update_data_w[reverseIndex])})
+            self.b.update({"B" + str(i) : np.matrix(update_data_b[reverseIndex])})
 
-    def train(self):
-        error = numpy.zeros(self.ans.shape)
-        out = numpy.zeros(self.ans.shape)
-        for i in range(self.input.shape[1]):
+    def train(self, targetInput, targetOutput):
 
-            self.single_input_forward(i)
-            self.single_output_error_update(i)
-            # error[:, i] = 0.5 * numpy.square(self.ans[:, i] - self.out[-1])
-            error[:, i] = self.out[-1] - self.ans[:, i]
-            out[:, i] = numpy.copy(self.out[-1])
-            # print('{0} : {1}'.format(i, error[:, i]))
+        self.validDataSize(targetInput, targetOutput)        
+        targetInput = np.matrix(targetInput)
+        targetOutput = np.matrix(targetOutput)
+
+        targetOutputShape = np.shape(targetOutput)
+        error = np.zeros(targetOutputShape)
+        out = np.zeros(targetOutputShape)
+        for i in range(targetOutputShape[1]):
+
+            self.single_input_forward(targetInput, targetOutput, i)
+            self.single_output_error_update(targetInput, targetOutput, i)
+
+            error[:, i] = self.out[-1] - targetOutput[:, i]
+            out[:, i] = np.copy(self.out[-1])
+            # print("{0} : {1}".format(i, error[:, i]))
 
         # plt.plot(error[0])
-        # plt.show()
         return error, out
     
     def validation(self, targetInput, targetOutput):
-        inputShape = numpy.shape(targetInput)
-        error = numpy.zeros(inputShape)
-        out = numpy.zeros(inputShape)
-        for i in range(inputShape[1]):
+        self.validDataSize(targetInput, targetOutput)
+        
+        targetInput = np.matrix(targetInput)
+        targetOutput = np.matrix(targetOutput)
 
-            self.single_input_forward(i)
-            # self.single_output_error_update(i)
-            error[:, i] = targetOutput[:, i] - self.out[-1]
-            out[:, i] = numpy.copy(self.out[-1])
+        targetOutputShape = np.shape(targetOutput)
+        error = np.zeros(targetOutputShape)
+        out = np.zeros(targetOutputShape)
+        for i in range(targetOutputShape[1]):
 
-            # print('{0} : {1}'.format(i, error[:, i]))
+            self.single_input_forward(targetInput, targetOutput, i)
+            # self.single_output_error_update(targetInput, targetOutput, i)
+
+            error[:, i] = self.out[-1] - targetOutput[:, i]
+            out[:, i] = np.copy(self.out[-1])
+            # print("{0} : {1}".format(i, error[:, i]))
 
         # plt.plot(error[0])
-        # plt.show()
         return error, out
