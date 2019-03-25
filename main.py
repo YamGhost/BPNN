@@ -54,14 +54,14 @@ if __name__ == "__main__":
     plt.ylabel("E")
 
     ax3D_train = Axes3D(plt.figure())
-    ax3D_train.scatter(x_array, y_array, outList, label = "Output")
-    ax3D_train.scatter(x_array, y_array, ans, label = "Target")
+    ax3D_train.scatter(x_array_train, y_array_train, outList, label = "Output")
+    ax3D_train.scatter(x_array_train, y_array_train, ans_train, label = "Target")
     ax3D_train.set_xlabel("x")
     ax3D_train.set_ylabel("y")
     ax3D_train.set_zlabel("z")
-    ax3D_train.title("Training")
+    ax3D_train.set_title("Training")
 
-    ax3D.legend(loc="lower right")
+    ax3D_train.legend(loc="lower right")
 
     #Validation
     error, outList = network.validation([x_array_validation, y_array_validation], [ans_validation])
@@ -77,7 +77,7 @@ if __name__ == "__main__":
     ax3D_Validation.set_xlabel("x")
     ax3D_Validation.set_ylabel("y")
     ax3D_Validation.set_zlabel("z")
-    ax3D_Validation.title("Validation")
+    ax3D_Validation.set_title("Validation")
 
     ax3D_Validation.legend(loc="lower right")
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
     ax3D_testing.set_xlabel("x")
     ax3D_testing.set_ylabel("y")
     ax3D_testing.set_zlabel("z")
-    ax3D_testing.title("Testing")
+    ax3D_testing.set_title("Testing")
 
     ax3D_testing.legend(loc="lower right")
 
