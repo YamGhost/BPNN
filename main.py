@@ -6,6 +6,7 @@ import time
 
 if __name__ == "__main__":
 
+    #Create data
     # x_array_train = np.random.uniform(1, 10, 400)
     # y_array_train = np.random.uniform(1, 10, 400)
     # np.savetxt("x_array_train.txt", x_array_train)
@@ -21,14 +22,17 @@ if __name__ == "__main__":
     # np.savetxt("x_array_testing.txt", x_array_testing)
     # np.savetxt("y_array_testing.txt", y_array_testing)
 
-    x_array_train = np.loadtxt("x_array_train.txt")
-    y_array_train = np.loadtxt("y_array_train.txt")
+    #Load data
+    dataFolder = ".\\data\\"
 
-    x_array_validation = np.loadtxt("x_array_validation.txt")
-    y_array_validation = np.loadtxt("y_array_validation.txt")
+    x_array_train = np.loadtxt(dataFolder + "x_array_train.txt")
+    y_array_train = np.loadtxt(dataFolder + "y_array_train.txt")
 
-    x_array_testing = np.loadtxt("x_array_testing.txt")
-    y_array_testing = np.loadtxt("y_array_testing.txt")
+    x_array_validation = np.loadtxt(dataFolder + "x_array_validation.txt")
+    y_array_validation = np.loadtxt(dataFolder + "y_array_validation.txt")
+
+    x_array_testing = np.loadtxt(dataFolder + "x_array_testing.txt")
+    y_array_testing = np.loadtxt(dataFolder + "y_array_testing.txt")
 
     func = lambda x, y :  (x / 2) ** 2 + (y ** 3) / (x ** 2)
 
@@ -37,7 +41,7 @@ if __name__ == "__main__":
     ans_testing = func(x_array_testing, y_array_testing)
 
     activity_func = lambda x, alpha :  1.0 / (1 + np.exp(- alpha * x))
-    network = BPNN.network_graph([2, 10 ,1], [None, activity_func, None])
+    network = BPNN.network_graph([2, 45 ,1], [None, activity_func, None])   #神經元3層(節點2-45-ㄔㄛ1個)
 
     #Training
     epoch = 500
