@@ -6,6 +6,7 @@ import time
 
 if __name__ == "__main__":
 
+    # create
     # x_array_train = np.random.uniform(1, 10, 400)
     # y_array_train = np.random.uniform(1, 10, 400)
     # np.savetxt("x_array_train.txt", x_array_train)
@@ -21,26 +22,39 @@ if __name__ == "__main__":
     # np.savetxt("x_array_testing.txt", x_array_testing)
     # np.savetxt("y_array_testing.txt", y_array_testing)
 
-    x_array_train = np.loadtxt("x_array_train.txt")
-    y_array_train = np.loadtxt("y_array_train.txt")
+    x_array_train = np.random.uniform(- np.pi, np.pi, 300)
+    y_array_train = np.random.uniform(- np.pi, np.pi, 300)
 
-    x_array_validation = np.loadtxt("x_array_validation.txt")
-    y_array_validation = np.loadtxt("y_array_validation.txt")
+    x_array_validation = np.random.uniform(- np.pi, np.pi, 300)
+    y_array_validation = np.random.uniform(- np.pi, np.pi, 300)
 
-    x_array_testing = np.loadtxt("x_array_testing.txt")
-    y_array_testing = np.loadtxt("y_array_testing.txt")
+    x_array_testing = np.random.uniform(- np.pi, np.pi, 300)
+    y_array_testing = np.random.uniform(- np.pi, np.pi, 300)
 
-    func = lambda x, y :  (x / 2) ** 2 + (y ** 3) / (x ** 2)
+
+    # load
+    # x_array_train = np.loadtxt("x_array_train.txt")
+    # y_array_train = np.loadtxt("y_array_train.txt")
+
+    # x_array_validation = np.loadtxt("x_array_validation.txt")
+    # y_array_validation = np.loadtxt("y_array_validation.txt")
+
+    # x_array_testing = np.loadtxt("x_array_testing.txt")
+    # y_array_testing = np.loadtxt("y_array_testing.txt")
+
+
+    # func = lambda x, y :  (x / 2) ** 2 + (y ** 3) / (x ** 2)
+    func = lambda x, y :  3 * x * np.sin(x) + 3 * np.cos(y ** 2) 
 
     ans_train = func(x_array_train, y_array_train)
     ans_validation = func(x_array_validation, y_array_validation)
     ans_testing = func(x_array_testing, y_array_testing)
 
     activity_func = lambda x, alpha :  1.0 / (1 + np.exp(- alpha * x))
-    network = BPNN.network_graph([2, 10 ,1], [None, activity_func, None])
+    network = BPNN.network_graph([2, 7 ,1], [None, activity_func, None], LR = 0.01)
 
     #Training
-    epoch = 500
+    epoch = 2000
     error_ave = np.zeros(epoch)
     for i in range(epoch):
         error, outList = network.train([x_array_train, y_array_train], [ans_train])
