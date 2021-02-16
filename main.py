@@ -74,8 +74,8 @@ if __name__ == "__main__":
 
     plt.figure()
     plt.plot(np.arange(0, len(error_ave), 1), error_ave)
-    plt.xlabel("x")
-    plt.ylabel("E")
+    plt.xlabel("epoch")
+    plt.ylabel("RMSD")
 
     ax3D_train = Axes3D(plt.figure())
     ax3D_train.scatter(x_array_train, y_array_train, outList, label = "Output", depthshade = False, marker = "x", color = "red")
