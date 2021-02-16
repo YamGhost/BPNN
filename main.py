@@ -21,7 +21,7 @@ if __name__ == "__main__":
     # y_array_testing = np.random.uniform(1, 10, 100)
     # np.savetxt("x_array_testing.txt", x_array_testing)
     # np.savetxt("y_array_testing.txt", y_array_testing)
-
+    
     #Load data
     dataFolder = ".\\data\\"
 
@@ -43,8 +43,28 @@ if __name__ == "__main__":
     activity_func = lambda x, alpha :  1.0 / (1 + np.exp(- alpha * x))
     network = BPNN.network_graph([2, 45 ,1], [None, activity_func, None])   #神經元3層(節點2-45-ㄔㄛ1個)
 
+    # plot data
+    # ax3D_train = Axes3D(plt.figure())
+    # ax3D_train.scatter(x_array_train, y_array_train, ans_train, marker = "o", color = "blue", depthshade=False)
+    # ax3D_train.set_xlabel("x")
+    # ax3D_train.set_ylabel("y")
+    # ax3D_train.set_zlabel("z")
+    # ax3D_train.set_title("Training data")
+    # ax3D_train.legend(loc="lower right")
+
+    # ax3D_train = Axes3D(plt.figure())
+    # ax3D_train.scatter(x_array_testing, y_array_testing, ans_testing, marker = "o", color = "blue", depthshade=False)
+    # ax3D_train.set_xlabel("x")
+    # ax3D_train.set_ylabel("y")
+    # ax3D_train.set_zlabel("z")
+    # ax3D_train.set_title("Testing data")
+    # ax3D_train.legend(loc="lower right")
+
+    # plt.show()
+
+
     #Training
-    epoch = 500
+    epoch = 5000
     error_ave = np.zeros(epoch)
     for i in range(epoch):
         error, outList = network.train([x_array_train, y_array_train], [ans_train])
@@ -58,8 +78,8 @@ if __name__ == "__main__":
     plt.ylabel("E")
 
     ax3D_train = Axes3D(plt.figure())
-    ax3D_train.scatter(x_array_train, y_array_train, outList, label = "Output")
-    ax3D_train.scatter(x_array_train, y_array_train, ans_train, label = "Target")
+    ax3D_train.scatter(x_array_train, y_array_train, outList, label = "Output", depthshade = False, marker = "x", color = "red")
+    ax3D_train.scatter(x_array_train, y_array_train, ans_train, label = "Target", depthshade = False, marker = "o", color = "blue")
     ax3D_train.set_xlabel("x")
     ax3D_train.set_ylabel("y")
     ax3D_train.set_zlabel("z")
@@ -76,8 +96,8 @@ if __name__ == "__main__":
     # plt.ylabel("E")
 
     ax3D_Validation = Axes3D(plt.figure())
-    ax3D_Validation.scatter(x_array_validation, y_array_validation, outList, label = "Output")
-    ax3D_Validation.scatter(x_array_validation, y_array_validation, ans_validation, label = "Target")
+    ax3D_Validation.scatter(x_array_validation, y_array_validation, outList, label = "Output", depthshade = False, marker = "x", color = "red")
+    ax3D_Validation.scatter(x_array_validation, y_array_validation, ans_validation, label = "Target", depthshade = False, marker = "o", color = "blue")
     ax3D_Validation.set_xlabel("x")
     ax3D_Validation.set_ylabel("y")
     ax3D_Validation.set_zlabel("z")
@@ -94,8 +114,8 @@ if __name__ == "__main__":
     # plt.ylabel("E")
 
     ax3D_testing = Axes3D(plt.figure())
-    ax3D_testing.scatter(x_array_testing, y_array_testing, outList, label = "Output")
-    ax3D_testing.scatter(x_array_testing, y_array_testing, ans_testing, label = "Target")
+    ax3D_testing.scatter(x_array_testing, y_array_testing, outList, label = "Output", depthshade = False, marker = "x", color = "red")
+    ax3D_testing.scatter(x_array_testing, y_array_testing, ans_testing, label = "Target", depthshade = False, marker = "o", color = "blue")
     ax3D_testing.set_xlabel("x")
     ax3D_testing.set_ylabel("y")
     ax3D_testing.set_zlabel("z")
