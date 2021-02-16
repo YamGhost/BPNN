@@ -57,7 +57,7 @@
     <thead>
         <tr>
             <th>訓練(400點)</th>
-            <th>測試(300點)</th>
+            <th>測試(100點)</th>
         </tr>
     </thead>
     <tbody>
@@ -69,7 +69,7 @@
             </td>
             <td>   
               <p align="center">
-                <img src="https://github.com/YamGhost/BPNN/blob/master/fig/testing_300.png"/>
+                <img src="https://github.com/YamGhost/BPNN/blob/master/fig/testing_100.png"/>
               </p>
             </td>
         </tr>
@@ -78,16 +78,16 @@
 
 ## 結果
 <p>
-  使用3層神經網路輸入到輸出分別為2、45、1個神經元，擬合目標函數訓練資料為400點、測試資料為300點，下圖藍色圓圈為原始資料集(target)、紅色叉叉為神經網路輸出(output)，分別將x、y、z=f(x)畫於圖上，得到誤差MSE和學習率曲線。
+  使用3層神經網路輸入到輸出分別為2、45、1個神經元，擬合目標函數訓練資料為400點、測試資料為300點，下圖藍色圓圈為原始資料集(target)、紅色叉叉為神經網路輸出(output)，分別將x、y、z=f(x)畫於圖上，得到均方根誤差RMSD曲線。
 </p>
 <p align="center">
-  <img src="https://latex.codecogs.com/gif.latex?MSE=\frac{1}{N}\sum_{i}^{N}\left&space;(&space;target_{i}-output_{i}&space;\right&space;)^2" title="MSE=\frac{1}{N}\sum_{i}^{N}\left ( target_{i}-output_{i} \right )^2" />
+  <img src="https://latex.codecogs.com/gif.latex?RMSD=\sqrt{\frac{1}{N}\sum_{i}^{N}\left&space;(&space;target_{i}-output_{i}&space;\right&space;)^2}" title="RMSD=\sqrt{\frac{1}{N}\sum_{i}^{N}\left ( target_{i}-output_{i} \right )^2}" />
 </p>
 <table align="center">
     <thead>
         <tr>
             <th>訓練(400點)</th>
-            <th>測試(300點)</th>
+            <th>測試(100點)</th>
         </tr>
     </thead>
     <tbody>
@@ -99,29 +99,23 @@
             </td>
             <td>   
               <p align="center">
-                <img src="https://github.com/YamGhost/BPNN/blob/master/fig/N45_3_label.png"/>
+                <img src="https://github.com/YamGhost/BPNN/blob/master/fig/N45_4_label.png"/>
               </p>
             </td>
         </tr>
     </tbody>
         <thead>
         <tr>
-            <th>誤差MSE</th>
-            <th>學習率</th>
+            <th colspan="2">均方根誤差RMSD</th>
         </tr>
     </thead>
     <tbody>
         <tr>
-            <td>
+            <td colspan="2"  width="30%">
               <p align="center">
                 <img src="https://github.com/YamGhost/BPNN/blob/master/fig/N45_1.png" />
               </p>
             </td>
-            <td>   
-              <p align="center">
-                <img src="https://github.com/YamGhost/BPNN/blob/master/fig/N45_4.png"/>
-              </p>
-            </td>
-        </tr>
+        </tr>        
     </tbody>
 </table>
