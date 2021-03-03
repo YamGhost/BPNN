@@ -4,7 +4,7 @@
 ## 目標函數
 <table align="center">
   <td align="center">
-     <a href="https://www.codecogs.com/eqnedit.php?latex=f(x)=\left(&space;\frac{x}{2}&space;\right)^2&space;&plus;&space;\frac{y^3}{x^2}\;&space;x,y\in(1,10)" target="_blank"><img src="https://latex.codecogs.com/gif.latex?f(x)=\left(&space;\frac{x}{2}&space;\right)^2&space;&plus;&space;\frac{y^3}{x^2}\;&space;x,y\in(1,10)" title="f(x)=\left( \frac{x}{2} \right)^2 + \frac{y^3}{x^2}\; x,y\in(1,10)" /></a>
+     <img src="https://latex.codecogs.com/gif.latex?f(x)=\left(&space;\frac{x}{2}&space;\right)^2&space;&plus;&space;\frac{y^3}{x^2}\;&space;x,y\in(1,10)" title="f(x)=\left(&space;\frac{x}{2}&space;\right)^2&space;&plus;&space;\frac{y^3}{x^2}\;&space;x,y\in(1,10)" />
   </td>
   <td>
     <img src="https://github.com/YamGhost/BPNN/blob/master/fig/target%20func.png" />
@@ -81,7 +81,7 @@
   使用3層神經網路輸入到輸出分別為2、45、1個神經元，擬合目標函數訓練資料為400點、測試資料為300點，下圖藍色圓圈為原始資料集(target)、紅色叉叉為神經網路輸出(output)，分別將x、y、z=f(x)畫於圖上，得到均方根誤差RMSD曲線。
 </p>
 <p align="center">
-  <img src="https://latex.codecogs.com/gif.latex?RMSD=\sqrt{\frac{1}{N}\sum_{i}^{N}\left&space;(&space;target_{i}-output_{i}&space;\right&space;)^2}" title="RMSD=\sqrt{\frac{1}{N}\sum_{i}^{N}\left ( target_{i}-output_{i} \right )^2}" />
+  <img src="https://latex.codecogs.com/gif.latex?RMSD=\sqrt{\frac{1}{N}\sum_{i}^{N}\left&space;(&space;target_{i}-output_{i}&space;\right&space;)^2}" title="RMSD=\sqrt{\frac{1}{N}\sum_{i}^{N}\left&space;(&space;target_{i}-output_{i}&space;\right&space;)^2}" />
 </p>
 <table align="center">
     <thead>
